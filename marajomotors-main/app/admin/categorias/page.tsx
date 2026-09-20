@@ -8,9 +8,18 @@ import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/
 import { getAdminCategories, getAdminProducts } from "@/lib/data/repository"
 import { CategoryRowActions } from "@/components/admin/category-row-actions"
 import { CategoryFormDialog } from "@/components/admin/category-form-dialog"
+import { SupabaseSetupNotice } from "@/components/admin/supabase-setup-notice"
+
+export const dynamic = "force-dynamic"
 
 export default async function AdminCategoriesPage() {
-  const [categories, products] = await Promise.all([getAdminCategories(), getAdminProducts()])
+  let categories: Awaited<ReturnType<typeof getAdminCategories>>
+  let products: Awaited<ReturnType<typeof getAdminProducts>>
+  try {
+    ;[categories, products] = await Promise.all([getAdminCategories(), getAdminProducts()])
+  } catch {
+    return <SupabaseSetupNotice />
+  }
   const nextOrder = categories.reduce((max, category) => Math.max(max, category.order), -1) + 1
 
   return (
@@ -71,7 +80,7 @@ export default async function AdminCategoriesPage() {
                             <p className="truncate text-sm font-medium text-foreground">{category.name}</p>
                             <p className="truncate text-xs text-muted-foreground">/{category.slug}</p>
                           </div>
-                          <CategoryRowActions categoryName={category.name} />
+                          <CategoryRowActions category={category} />
                         </div>
                         <p className="truncate text-xs text-muted-foreground">{category.description}</p>
                         <div className="flex flex-wrap items-center gap-1.5">
@@ -132,7 +141,7 @@ export default async function AdminCategoriesPage() {
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right">
-                            <CategoryRowActions categoryName={category.name} />
+                            <CategoryRowActions category={category} />
                           </TableCell>
                         </TableRow>
                       )

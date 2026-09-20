@@ -1,8 +1,16 @@
 import { SettingsForm } from "@/components/admin/settings-form"
 import { getAdminSiteSettings } from "@/lib/data/repository"
+import { SupabaseSetupNotice } from "@/components/admin/supabase-setup-notice"
+
+export const dynamic = "force-dynamic"
 
 export default async function AdminSettingsPage() {
-  const settings = await getAdminSiteSettings()
+  let settings: Awaited<ReturnType<typeof getAdminSiteSettings>>
+  try {
+    settings = await getAdminSiteSettings()
+  } catch {
+    return <SupabaseSetupNotice />
+  }
 
   return (
     <div className="flex flex-col gap-6">

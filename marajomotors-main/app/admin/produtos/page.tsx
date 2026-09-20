@@ -10,9 +10,18 @@ import { getAdminCategories, getAdminProducts } from "@/lib/data/repository"
 import { formatPrice } from "@/lib/format"
 import { ProductRowActions } from "@/components/admin/product-row-actions"
 import { PackageIcon } from "lucide-react"
+import { SupabaseSetupNotice } from "@/components/admin/supabase-setup-notice"
+
+export const dynamic = "force-dynamic"
 
 export default async function AdminProductsPage() {
-  const [products, categories] = await Promise.all([getAdminProducts(), getAdminCategories()])
+  let products: Awaited<ReturnType<typeof getAdminProducts>>
+  let categories: Awaited<ReturnType<typeof getAdminCategories>>
+  try {
+    ;[products, categories] = await Promise.all([getAdminProducts(), getAdminCategories()])
+  } catch {
+    return <SupabaseSetupNotice />
+  }
   const categoryNameBySlug = new Map(categories.map((category) => [category.slug, category.name]))
   const getCategoryName = (slug: string) => categoryNameBySlug.get(slug) ?? slug
 

@@ -6,15 +6,21 @@ import { Button } from "@/components/ui/button"
 import { getAdminCategories, getAdminLeads, getAdminProducts } from "@/lib/data/repository"
 import { formatPrice } from "@/lib/format"
 import { leadStatusLabels } from "@/lib/admin/lead-status"
+import { SupabaseSetupNotice } from "@/components/admin/supabase-setup-notice"
+
+export const dynamic = "force-dynamic"
 
 // Números e listas desta página vêm diretamente das tabelas do Supabase
 // (products, categories, leads) através da camada de repositório admin.
 export default async function AdminDashboardPage() {
-  const [products, categories, leads] = await Promise.all([
-    getAdminProducts(),
-    getAdminCategories(),
-    getAdminLeads(),
-  ])
+  let products: Awaited<ReturnType<typeof getAdminProducts>>
+  let categories: Awaited<ReturnType<typeof getAdminCategories>>
+  let leads: Awaited<ReturnType<typeof getAdminLeads>>
+  try {
+    ;[products, categories, leads] = await Promise.all([getAdminProducts(), getAdminCategories(), getAdminLeads()])
+  } catch {
+    return <SupabaseSetupNotice />
+  }
 
   const stats = [
     { label: "Produtos", value: products.length, icon: PackageIcon, href: "/admin/produtos" },

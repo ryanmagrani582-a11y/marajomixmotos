@@ -5,9 +5,17 @@ import { Badge } from "@/components/ui/badge"
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty"
 import { getAdminLeads } from "@/lib/data/repository"
 import { LeadStatusSelect } from "@/components/admin/lead-status-select"
+import { SupabaseSetupNotice } from "@/components/admin/supabase-setup-notice"
+
+export const dynamic = "force-dynamic"
 
 export default async function AdminLeadsPage() {
-  const leads = await getAdminLeads()
+  let leads: Awaited<ReturnType<typeof getAdminLeads>>
+  try {
+    leads = await getAdminLeads()
+  } catch {
+    return <SupabaseSetupNotice />
+  }
 
   return (
     <div className="flex flex-col gap-6">

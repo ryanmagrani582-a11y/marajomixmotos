@@ -1,8 +1,16 @@
 import { ProductForm } from "@/components/admin/product-form"
 import { getAdminCategories } from "@/lib/data/repository"
+import { SupabaseSetupNotice } from "@/components/admin/supabase-setup-notice"
+
+export const dynamic = "force-dynamic"
 
 export default async function NewProductPage() {
-  const categories = await getAdminCategories()
+  let categories: Awaited<ReturnType<typeof getAdminCategories>>
+  try {
+    categories = await getAdminCategories()
+  } catch {
+    return <SupabaseSetupNotice />
+  }
 
   return (
     <div className="flex flex-col gap-6">
