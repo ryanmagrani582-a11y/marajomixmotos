@@ -1,0 +1,93 @@
+-- =============================================================================
+-- Marajó Motors — Modelos de INSERT para preencher com dados reais
+-- =============================================================================
+-- Estes exemplos NÃO devem ser executados como estão — copie o bloco do que
+-- precisar, apague os comentários "-- exemplo" e troque os valores pelos
+-- dados reais de cada produto/banner antes de rodar no SQL Editor.
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- 1) Um produto (ex.: uma moto)
+-- -----------------------------------------------------------------------------
+-- exemplo:
+-- with novo_produto as (
+--   insert into public.products (
+--     slug, name, brand, category_slug,
+--     short_description, description,
+--     price, promo_price, featured, active
+--   )
+--   values (
+--     'yamaha-mt-03',                 -- slug único (usado na URL)
+--     'MT-03',                        -- nome
+--     'YAMAHA',                       -- marca: YAMAHA ou SOUSA MOTOS
+--     'motos',                        -- categoria (veja slugs em categories)
+--     'Naked esportiva de média cilindrada.',
+--     'Descrição completa do produto para a página de detalhes.',
+--     27990.00,                       -- preço (ou null se "consulte")
+--     null,                           -- preço promocional (ou null)
+--     true,                           -- aparece em "destaques"?
+--     true                            -- visível no site?
+--   )
+--   returning id
+-- )
+-- insert into public.product_images (product_id, url, alt, "order", is_primary)
+-- select id, '/images/prod-moto-mt03.png', 'Yamaha MT-03', 1, true
+-- from novo_produto;
+
+-- Para adicionar mais fotos ao mesmo produto depois de criado, use o id retornado:
+-- insert into public.product_images (product_id, url, alt, "order", is_primary)
+-- values ('<uuid-do-produto>', '/images/prod-moto-mt03-2.png', 'Yamaha MT-03 — traseira', 2, false);
+
+-- Ficha técnica do produto:
+-- insert into public.product_specs (product_id, label, value, "order")
+-- values
+--   ('<uuid-do-produto>', 'Motor', '321 cc', 1),
+--   ('<uuid-do-produto>', 'Potência', '42 cv', 2),
+--   ('<uuid-do-produto>', 'Transmissão', '6 marchas', 3);
+
+-- -----------------------------------------------------------------------------
+-- 2) Banner do hero
+-- -----------------------------------------------------------------------------
+-- exemplo:
+-- insert into public.banners (
+--   title, subtitle, image_desktop, image_mobile, cta_label, cta_link, active, "order"
+-- )
+-- values (
+--   'CONQUISTE A SUA MOTO DOS SONHOS.',
+--   'Representante autorizado Yamaha e Sousa Motos. Motos, náutica e consórcio Yamaha com atendimento de quem entende.',
+--   '/images/banner-yamaha-desktop.png',
+--   '/images/banner-yamaha-mobile.png',
+--   'AGENDE A REVISÃO DE GARANTIA',
+--   '/revisao-garantia',
+--   true,
+--   1
+-- );
+
+-- -----------------------------------------------------------------------------
+-- 3) Configurações institucionais (linha única, sempre id = 1)
+-- -----------------------------------------------------------------------------
+-- exemplo:
+-- insert into public.site_settings (
+--   id, company_name, whatsapp, instagram, phone, address, email,
+--   institutional_text, whatsapp_message_template
+-- )
+-- values (
+--   1,
+--   'Marajó Motors',
+--   '(91) 99299-2906',
+--   'https://www.instagram.com/marajomotorsoficial/',
+--   '(91) 99299-2906',
+--   'Lojas filiais em Cametá, Portel e Vigia — Pará',
+--   null,
+--   'Representante autorizado Yamaha e Sousa Motos. Especialistas em motos, náutica e consórcio Yamaha.',
+--   'Olá! Tenho interesse no produto {{produto}}. Gostaria de receber mais informações.'
+-- )
+-- on conflict (id) do update set
+--   company_name = excluded.company_name,
+--   whatsapp = excluded.whatsapp,
+--   instagram = excluded.instagram,
+--   phone = excluded.phone,
+--   address = excluded.address,
+--   email = excluded.email,
+--   institutional_text = excluded.institutional_text,
+--   whatsapp_message_template = excluded.whatsapp_message_template;
