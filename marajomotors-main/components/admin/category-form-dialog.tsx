@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, useState, type ReactNode } from "react"
+import { useId, useState, type ReactElement } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import {
@@ -35,7 +35,7 @@ export function CategoryFormDialog({
   nextOrder = 0,
 }: {
   category?: Category
-  trigger: ReactNode
+  trigger: ReactElement
   nextOrder?: number
 }) {
   const router = useRouter()

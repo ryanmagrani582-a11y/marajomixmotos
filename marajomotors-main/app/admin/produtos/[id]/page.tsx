@@ -1,10 +1,19 @@
 import { notFound } from "next/navigation"
 import { ProductForm } from "@/components/admin/product-form"
 import { getAdminCategories, getAdminProductById } from "@/lib/data/repository"
+import { SupabaseSetupNotice } from "@/components/admin/supabase-setup-notice"
+
+export const dynamic = "force-dynamic"
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const [product, categories] = await Promise.all([getAdminProductById(id), getAdminCategories()])
+  let product: Awaited<ReturnType<typeof getAdminProductById>>
+  let categories: Awaited<ReturnType<typeof getAdminCategories>>
+  try {
+    ;[product, categories] = await Promise.all([getAdminProductById(id), getAdminCategories()])
+  } catch {
+    return <SupabaseSetupNotice />
+  }
 
   if (!product) notFound()
 
