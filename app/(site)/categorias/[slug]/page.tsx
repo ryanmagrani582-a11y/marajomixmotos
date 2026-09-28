@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { CategoryHero } from "@/components/categories/category-hero"
+import { ProductBrandTabs } from "@/components/products/product-brand-tabs"
 import { ProductCard } from "@/components/products/product-card"
 import { WhatsAppCtaButton } from "@/components/whatsapp/whatsapp-cta-button"
 import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
@@ -26,12 +27,23 @@ export async function generateMetadata({
   }
 }
 
-export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CategoryPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ marca?: string }>
+}) {
   const { slug } = await params
+  const { marca = "all" } = await searchParams
   const category = await getCategoryBySlug(slug)
   if (!category) notFound()
 
-  const products = await getProductsByCategory(category.slug)
+  const allProducts = await getProductsByCategory(category.slug)
+  const selectedBrand = ["all", "YAMAHA", "SOUSA MOTOS"].includes(marca) ? marca : "all"
+  const products = category.slug === "motos" && selectedBrand !== "all"
+    ? allProducts.filter((product) => product.brand === selectedBrand)
+    : allProducts
 
   return (
     <main>
@@ -39,10 +51,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
       <section className="px-6 py-14 md:px-10 lg:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="font-heading text-2xl font-bold uppercase tracking-tight text-foreground">
               Produtos {category.name}
             </h2>
+            {category.slug === "motos" ? (
+              <ProductBrandTabs categorySlug={category.slug} selectedBrand={selectedBrand} />
+            ) : null}
           </div>
 
           {products.length === 0 ? (

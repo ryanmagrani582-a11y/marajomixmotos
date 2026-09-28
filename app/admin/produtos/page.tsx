@@ -14,7 +14,18 @@ import { SupabaseSetupNotice } from "@/components/admin/supabase-setup-notice"
 
 export const dynamic = "force-dynamic"
 
-export default async function AdminProductsPage() {
+const BRAND_TABS = [
+  { value: "all", label: "Todos" },
+  { value: "YAMAHA", label: "Yamaha" },
+  { value: "SOUSA MOTOS", label: "Sousa Motos" },
+]
+
+export default async function AdminProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ marca?: string }>
+}) {
+  const { marca = "all" } = await searchParams
   let products: Awaited<ReturnType<typeof getAdminProducts>>
   let categories: Awaited<ReturnType<typeof getAdminCategories>>
   try {
@@ -24,6 +35,8 @@ export default async function AdminProductsPage() {
   }
   const categoryNameBySlug = new Map(categories.map((category) => [category.slug, category.name]))
   const getCategoryName = (slug: string) => categoryNameBySlug.get(slug) ?? slug
+  const selectedBrand = BRAND_TABS.some((tab) => tab.value === marca) ? marca : "all"
+  const visibleProducts = selectedBrand === "all" ? products : products.filter((product) => product.brand === selectedBrand)
 
   return (
     <div className="flex flex-col gap-6">
@@ -34,7 +47,7 @@ export default async function AdminProductsPage() {
             <p className="text-sm text-muted-foreground">Gerencie o catálogo de produtos da Marajó Motors.</p>
           </div>
           <Badge variant="secondary" className="mt-1">
-            {products.length} {products.length === 1 ? "produto" : "produtos"}
+            {visibleProducts.length} {visibleProducts.length === 1 ? "produto" : "produtos"}
           </Badge>
         </div>
         <Button render={<Link href="/admin/produtos/novo" />}>
@@ -43,9 +56,22 @@ export default async function AdminProductsPage() {
         </Button>
       </div>
 
+      <nav aria-label="Filtrar produtos por marca" className="flex flex-wrap gap-2">
+        {BRAND_TABS.map((tab) => (
+          <Button
+            key={tab.value}
+            variant={selectedBrand === tab.value ? "default" : "outline"}
+            size="sm"
+            render={<Link href={tab.value === "all" ? "/admin/produtos" : `/admin/produtos?marca=${encodeURIComponent(tab.value)}`} />}
+          >
+            {tab.label}
+          </Button>
+        ))}
+      </nav>
+
       <Card className="rounded-xl border-white/10 bg-[#0B0B0B]">
         <CardContent className="p-0">
-          {products.length === 0 ? (
+          {visibleProducts.length === 0 ? (
             <Empty className="py-16">
               <EmptyHeader>
                 <EmptyMedia variant="icon">
@@ -63,7 +89,7 @@ export default async function AdminProductsPage() {
             <>
               {/* Mobile: lista em cards */}
               <div className="flex flex-col divide-y divide-white/10 lg:hidden">
-                {products.map((product) => {
+                    {visibleProducts.map((product) => {
                   const cover = product.images.find((img) => img.isPrimary) ?? product.images[0]
                   return (
                     <div key={product.id} className="flex gap-3 p-4">
@@ -116,7 +142,7 @@ export default async function AdminProductsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {products.map((product) => {
+                {visibleProducts.map((product) => {
                       const cover = product.images.find((img) => img.isPrimary) ?? product.images[0]
                       return (
                         <TableRow key={product.id}>
