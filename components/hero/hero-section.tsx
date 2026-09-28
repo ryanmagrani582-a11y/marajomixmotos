@@ -63,7 +63,7 @@ export function HeroSection() {
             priority
             className="hidden h-20 w-auto sm:h-24 md:block lg:h-28"
           />
-          <h1 className="mt-36 font-heading text-3xl font-bold uppercase leading-[1.05] tracking-tight text-foreground sm:mt-0 sm:text-5xl lg:text-6xl">
+          <h1 className="mt-36 font-heading text-3xl font-bold uppercase leading-[1.05] tracking-tight text-white sm:mt-0 sm:text-5xl lg:text-6xl">
             {banner.title}
           </h1>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white sm:mt-5 sm:text-lg md:mx-0">
