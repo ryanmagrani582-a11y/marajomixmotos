@@ -5,6 +5,8 @@ import { FeaturedProductsSection } from "@/components/products/featured-products
 import { ConsorcioHomeSection } from "@/components/consorcio/consorcio-home-section"
 import { AboutSection } from "@/components/about/about-section"
 
+export const dynamic = "force-dynamic"
+
 export default function HomePage() {
   return (
     <>

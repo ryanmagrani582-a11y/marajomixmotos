@@ -2,22 +2,20 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ProductCard } from "@/components/products/product-card"
-import { mockProducts } from "@/lib/data/mock-products"
+import { getProducts } from "@/lib/data/repository"
 import type { Product } from "@/lib/types"
 
 function BrandProductsRow({
   title,
   description,
-  brandFilter,
   brandQuery,
+  products,
 }: {
   title: string
   description: string
-  brandFilter: (product: Product) => boolean
   brandQuery: string
+  products: Product[]
 }) {
-  const products = mockProducts.filter((p) => p.active && brandFilter(p)).slice(0, 4)
-
   if (products.length === 0) return null
 
   return (
@@ -49,22 +47,29 @@ function BrandProductsRow({
   )
 }
 
-export function FeaturedProductsSection() {
+export async function FeaturedProductsSection() {
+  const products = await getProducts()
+
+  const yamahaProducts = products.filter((p) => p.brand === "YAMAHA" && p.featured).slice(0, 4)
+  const sousaProducts = products.filter((p) => p.brand === "SOUSA MOTOS" && p.featured).slice(0, 4)
+
+  if (yamahaProducts.length === 0 && sousaProducts.length === 0) return null
+
   return (
     <section className="bg-card">
       <div className="mx-auto flex max-w-7xl flex-col gap-16 px-4 py-20 sm:px-6 lg:gap-20 lg:px-8 lg:py-28">
         <BrandProductsRow
           title="Destaques Yamaha"
           description="Motos, scooters, náutica e quadriciclos direto da linha oficial Yamaha."
-          brandFilter={(p) => p.brand === "YAMAHA"}
           brandQuery="YAMAHA"
+          products={yamahaProducts}
         />
 
         <BrandProductsRow
           title="Destaques Sousa Motos"
           description="Triciclos, bikes elétricas e outros produtos da linha Sousa Motos."
-          brandFilter={(p) => p.brand === "SOUSA MOTOS"}
           brandQuery="SOUSA%20MOTOS"
+          products={sousaProducts}
         />
       </div>
     </section>
