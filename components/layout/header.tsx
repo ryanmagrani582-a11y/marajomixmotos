@@ -23,8 +23,8 @@ export function Header() {
       className={cn(
         "fixed inset-x-0 top-0 z-40 transition-all duration-300",
         scrolled
-          ? "border-b border-border bg-background/85 py-2.5 backdrop-blur-md"
-          : "border-b border-transparent bg-transparent py-5"
+          ? "border-b border-border bg-background py-2.5 shadow-sm"
+          : "border-b border-border bg-background py-5 shadow-sm"
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
