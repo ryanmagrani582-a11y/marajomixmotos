@@ -4,11 +4,10 @@ import Link from "next/link"
 import { MapPin, Phone } from "lucide-react"
 import { Logo } from "@/components/layout/logo"
 import { InstagramIcon } from "@/components/icons/instagram-icon"
-import { mockCategories } from "@/lib/data/mock-categories"
 import type { Category } from "@/lib/types"
 import { useSiteSettings } from "@/hooks/use-site-settings"
 
-export function Footer() {
+export function Footer({ categories }: { categories: Category[] }) {
   const { settings } = useSiteSettings()
 
   return (
@@ -39,7 +38,7 @@ export function Footer() {
               Categorias
             </h3>
             <ul className="mt-4 flex flex-col gap-3">
-              {mockCategories.map((category: Category) => (
+              {categories.map((category: Category) => (
                 <li key={category.slug}>
                   <Link
                     href={`/categorias/${category.slug}`}

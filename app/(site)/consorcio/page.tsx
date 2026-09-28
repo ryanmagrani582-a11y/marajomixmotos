@@ -1,11 +1,12 @@
-import type { Metadata } from "next"
 import { CheckCircle2Icon } from "lucide-react"
-import { mockCategories } from "@/lib/data/mock-categories"
+import { getCategories } from "@/lib/data/repository"
 import { CategoryCard } from "@/components/categories/category-card"
 import { InterestForm } from "@/components/forms/interest-form"
 import { WhatsAppCtaButton } from "@/components/whatsapp/whatsapp-cta-button"
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic"
+
+export const metadata = {
   title: "Consórcio Yamaha | Marajó Motors",
   description:
     "Representante autorizado Yamaha. Planeje hoje a conquista da sua Yamaha com o consórcio Yamaha na Marajó Motors.",
@@ -26,12 +27,13 @@ const benefits = [
   },
 ]
 
-// Consórcio faz sentido para produtos de maior valor: motos, náutica, quadriciclos e triciclos.
-const consortiumCategories = mockCategories.filter((c) =>
-  ["motos", "nautica", "quadriciclos", "triciclos"].includes(c.slug)
-)
+export default async function ConsorcioPage() {
+  const categories = await getCategories()
+  // Consórcio faz sentido para produtos de maior valor: motos, náutica, quadriciclos e triciclos.
+  const consortiumCategories = categories.filter((c) =>
+    ["motos", "nautica", "quadriciclos", "triciclos"].includes(c.slug)
+  )
 
-export default function ConsorcioPage() {
   return (
     <div className="flex flex-col">
       <section className="relative flex min-h-[420px] items-center overflow-hidden bg-[#0B0B0B] px-4 py-24 sm:px-6 lg:px-8">
