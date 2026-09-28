@@ -16,7 +16,7 @@ export function LoginForm() {
   const [state, formAction, isPending] = useActionState(loginAction, initialState)
 
   return (
-    <form action={formAction} className="rounded-xl border border-white/10 bg-[#0B0B0B] p-6 shadow-lg">
+    <form action={formAction} className="rounded-xl border border-border bg-card p-6 shadow-lg">
       <input type="hidden" name="next" value={next} />
 
       <div className="flex flex-col gap-4">

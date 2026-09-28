@@ -171,7 +171,7 @@ export function ProductForm({ product, categories }: { product?: Product; catego
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <Card className="border-white/10 bg-[#0B0B0B]">
+          <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="font-heading text-base">Informações básicas</CardTitle>
             </CardHeader>
@@ -283,7 +283,7 @@ export function ProductForm({ product, categories }: { product?: Product; catego
             </CardContent>
           </Card>
 
-          <Card className="border-white/10 bg-[#0B0B0B]">
+          <Card className="border-border bg-card">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="font-heading text-base">Especificações</CardTitle>
               <Button type="button" variant="outline" size="sm" onClick={addSpec}>
@@ -334,7 +334,7 @@ export function ProductForm({ product, categories }: { product?: Product; catego
         </div>
 
         <div className="flex flex-col gap-6">
-          <Card className="border-white/10 bg-[#0B0B0B]">
+          <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="font-heading text-base">Visibilidade</CardTitle>
             </CardHeader>
@@ -352,7 +352,7 @@ export function ProductForm({ product, categories }: { product?: Product; catego
             </CardContent>
           </Card>
 
-          <Card className="border-white/10 bg-[#0B0B0B]">
+          <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="font-heading text-base">Imagens</CardTitle>
             </CardHeader>
@@ -370,7 +370,7 @@ export function ProductForm({ product, categories }: { product?: Product; catego
                   addImagesFromFiles(e.dataTransfer.files)
                 }}
                 className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
-                  isDragging ? "border-primary bg-primary/5" : "border-white/15 hover:border-white/30"
+                  isDragging ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
                 }`}
               >
                 <UploadIcon className="size-5 text-muted-foreground" />
@@ -401,7 +401,7 @@ export function ProductForm({ product, categories }: { product?: Product; catego
                   {images.map((image, index) => (
                     <div
                       key={image.id}
-                      className="flex items-center gap-2 rounded-lg border border-white/10 p-2"
+                      className="flex items-center gap-2 rounded-lg border border-border p-2"
                     >
                       <GripVerticalIcon className="size-4 shrink-0 text-muted-foreground" />
                       <div className="relative size-12 shrink-0 overflow-hidden rounded-md bg-muted">

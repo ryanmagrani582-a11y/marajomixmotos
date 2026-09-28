@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const session = await verifyAdminSessionToken(cookieStore.get(ADMIN_SESSION_COOKIE_NAME)?.value)
 
   return (
-    <div className="flex min-h-screen bg-[#050505] text-foreground">
+    <div className="flex min-h-screen bg-background text-foreground">
       <AdminSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <AdminTopbar username={session?.username} />

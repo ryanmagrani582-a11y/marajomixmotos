@@ -50,7 +50,7 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <Link key={stat.label} href={stat.href}>
-            <Card className="rounded-xl border-white/10 bg-[#0B0B0B] transition-colors hover:border-primary/40">
+            <Card className="rounded-xl border-border bg-card transition-colors hover:border-primary/40">
               <CardContent className="flex items-center justify-between p-6">
                 <div>
                   <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -66,7 +66,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card className="rounded-xl border-white/10 bg-[#0B0B0B]">
+        <Card className="rounded-xl border-border bg-card">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="font-heading text-base">Leads recentes</CardTitle>
             <Button render={<Link href="/admin/leads" />} variant="ghost" size="sm">
@@ -98,7 +98,7 @@ export default async function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-xl border-white/10 bg-[#0B0B0B]">
+        <Card className="rounded-xl border-border bg-card">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="font-heading text-base">Produtos adicionados recentemente</CardTitle>
             <Button render={<Link href="/admin/produtos" />} variant="ghost" size="sm">
