@@ -1,16 +1,21 @@
 import type React from "react"
+import { cookies } from "next/headers"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { AdminTopbar } from "@/components/admin/admin-topbar"
+import { ADMIN_SESSION_COOKIE_NAME, verifyAdminSessionToken } from "@/lib/auth/admin-session"
 
-// TODO(supabase): proteger este layout com Supabase Auth — validar sessão do usuário
-// e redirecionar para /admin/login quando não autenticado ou sem a role "admin"
-// na tabela `profiles`. Por ora o painel é exibido sem autenticação real.
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+// A proteção de acesso ao painel é feita pelo middleware (middleware.ts),
+// que redireciona para /admin/login quando não há sessão válida. A página
+// de login não usa este layout (ela renderiza sua própria tela cheia).
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies()
+  const session = await verifyAdminSessionToken(cookieStore.get(ADMIN_SESSION_COOKIE_NAME)?.value)
+
   return (
     <div className="flex min-h-screen bg-[#050505] text-foreground">
       <AdminSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <AdminTopbar />
+        <AdminTopbar username={session?.username} />
         <main className="flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
