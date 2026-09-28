@@ -24,7 +24,7 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-2xl flex-col gap-6">
-      <Card className="border-white/10 bg-[#0B0B0B]">
+      <Card className="border-border bg-card">
         <CardHeader>
           <CardTitle className="font-heading text-base">Informações institucionais</CardTitle>
           <CardDescription>Usadas no rodapé, na página inicial e no WhatsApp.</CardDescription>
@@ -52,7 +52,7 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
         </CardContent>
       </Card>
 
-      <Card className="border-white/10 bg-[#0B0B0B]">
+      <Card className="border-border bg-card">
         <CardHeader>
           <CardTitle className="font-heading text-base">Canais de contato</CardTitle>
           <CardDescription>Exibidos no cabeçalho, rodapé e página de contato.</CardDescription>

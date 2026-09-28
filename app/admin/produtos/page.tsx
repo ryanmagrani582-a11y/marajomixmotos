@@ -69,7 +69,7 @@ export default async function AdminProductsPage({
         ))}
       </nav>
 
-      <Card className="rounded-xl border-white/10 bg-[#0B0B0B]">
+      <Card className="rounded-xl border-border bg-card">
         <CardContent className="p-0">
           {visibleProducts.length === 0 ? (
             <Empty className="py-16">
