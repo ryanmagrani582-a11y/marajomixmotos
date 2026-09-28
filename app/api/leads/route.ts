@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { createSupabaseAdminClient } from "@/lib/supabase/admin"
 
 /**
  * Recebe submissões do formulário de interesse.
@@ -16,13 +17,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Nome, WhatsApp e mensagem são obrigatórios." }, { status: 400 })
   }
 
-  console.log("[v0] Novo lead recebido (ainda não persistido no Supabase):", {
-    name,
-    whatsapp,
-    email,
-    productId,
-    message,
+  const supabase = createSupabaseAdminClient()
+  const { data: product } = productId
+    ? await supabase.from("products").select("name").eq("id", productId).maybeSingle()
+    : { data: null }
+
+  const { error } = await supabase.from("leads").insert({
+    name: String(name).trim(),
+    whatsapp: String(whatsapp).trim(),
+    email: email ? String(email).trim() : null,
+    product_id: productId || null,
+    product_name: product?.name ?? null,
+    message: String(message).trim(),
+    status: "novo",
   })
+
+  if (error) {
+    return NextResponse.json({ error: "Não foi possível registrar seu contato." }, { status: 500 })
+  }
 
   return NextResponse.json({ ok: true })
 }

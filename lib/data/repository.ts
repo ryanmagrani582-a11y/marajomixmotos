@@ -1,9 +1,7 @@
 import "server-only"
 
 import type { Category, Lead, Product, ProductImage, ProductSpec, SiteSettings } from "@/lib/types"
-import { mockCategories } from "@/lib/data/mock-categories"
-import { mockProducts } from "@/lib/data/mock-products"
-import { mockBanners, mockLeads, mockSiteSettings } from "@/lib/data/mock-site"
+import { mockSiteSettings } from "@/lib/data/mock-site"
 import { createSupabaseAdminClient } from "@/lib/supabase/admin"
 
 /**
@@ -17,16 +15,21 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin"
  */
 
 export async function getCategories(): Promise<Category[]> {
-  return [...mockCategories].sort((a, b) => a.order - b.order).filter((c) => c.active)
+  const { data, error } = await createSupabaseAdminClient().from("categories").select("*").eq("active", true).order("order")
+  if (error) throw error
+  return (data ?? []).map(mapCategoryRow)
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
-  const categories = await getCategories()
-  return categories.find((c) => c.slug === slug) ?? null
+  const { data, error } = await createSupabaseAdminClient().from("categories").select("*").eq("slug", slug).eq("active", true).maybeSingle()
+  if (error) throw error
+  return data ? mapCategoryRow(data) : null
 }
 
 export async function getProducts(): Promise<Product[]> {
-  return [...mockProducts].filter((p) => p.active)
+  const { data, error } = await createSupabaseAdminClient().from("products").select("*, product_images(*), product_specs(*)").eq("active", true).order("updated_at", { ascending: false })
+  if (error) throw error
+  return (data ?? []).map(mapProductRow)
 }
 
 export async function getFeaturedProducts(): Promise<Product[]> {
@@ -40,20 +43,27 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  const products = await getProducts()
-  return products.find((p) => p.slug === slug) ?? null
+  const { data, error } = await createSupabaseAdminClient().from("products").select("*, product_images(*), product_specs(*)").eq("slug", slug).eq("active", true).maybeSingle()
+  if (error) throw error
+  return data ? mapProductRow(data) : null
 }
 
 export async function getBanners() {
-  return [...mockBanners].filter((b) => b.active).sort((a, b) => a.order - b.order)
+  const { data, error } = await createSupabaseAdminClient().from("banners").select("*").eq("active", true).order("order")
+  if (error) throw error
+  return data ?? []
 }
 
 export async function getSiteSettings() {
-  return mockSiteSettings
+  const { data, error } = await createSupabaseAdminClient().from("site_settings").select("*").eq("id", 1).maybeSingle()
+  if (error) throw error
+  return data ? mapSiteSettingsRow(data) : mockSiteSettings
 }
 
 export async function getLeads() {
-  return [...mockLeads].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  const { data, error } = await createSupabaseAdminClient().from("leads").select("*").order("created_at", { ascending: false })
+  if (error) throw error
+  return (data ?? []).map(mapLeadRow)
 }
 
 /**
@@ -197,8 +207,8 @@ export async function getAdminSiteSettings(): Promise<SiteSettings> {
   return data ? mapSiteSettingsRow(data) : mockSiteSettings
 }
 
-// Banners: ainda gerenciados com DEMO DATA no painel — não há CRUD real
-// conectado ao Supabase Storage/tabela `banners` por enquanto.
 export async function getAdminBanners() {
-  return [...mockBanners].sort((a, b) => a.order - b.order)
+  const { data, error } = await createSupabaseAdminClient().from("banners").select("*").order("order")
+  if (error) throw error
+  return data ?? []
 }
