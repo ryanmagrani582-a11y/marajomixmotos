@@ -43,8 +43,8 @@ export function AdminSidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 bg-[#0B0B0B] lg:flex">
-      <div className="flex h-20 items-center border-b border-white/10 px-6">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-sidebar lg:flex">
+      <div className="flex h-20 items-center border-b border-border px-6">
         <Link href="/admin" className="flex items-center gap-2" aria-label="Painel administrativo Marajó Motors">
           <Image
             src="/images/marajo-motors-logo.png"
@@ -72,8 +72,8 @@ export function AdminSidebar() {
                   className={cn(
                     "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-primary/15 text-primary"
-                      : "text-muted-foreground hover:bg-white/5 hover:text-foreground",
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-secondary hover:text-foreground",
                   )}
                 >
                   {isActive ? (
@@ -88,11 +88,11 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-white/10 p-4">
+      <div className="border-t border-border p-4">
         <Link
           href="/"
           target="_blank"
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
         >
           <ExternalLinkIcon className="size-4" />
           Ver site público

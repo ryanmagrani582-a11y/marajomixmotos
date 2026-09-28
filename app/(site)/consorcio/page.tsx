@@ -36,10 +36,10 @@ export default async function ConsorcioPage() {
 
   return (
     <div className="flex flex-col">
-      <section className="relative flex min-h-[420px] items-center overflow-hidden bg-[#0B0B0B] px-4 py-24 sm:px-6 lg:px-8">
+      <section className="relative flex min-h-[420px] items-center overflow-hidden bg-secondary px-4 py-24 sm:px-6 lg:px-8">
         <div
           aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.06),transparent_55%)]"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(20,71,230,0.08),transparent_55%)]"
         />
         <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-6">
           <span className="text-xs font-medium uppercase tracking-[0.25em] text-primary">
@@ -101,7 +101,7 @@ export default async function ConsorcioPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-[#0B0B0B] px-4 py-20 sm:px-6 lg:px-8">
+      <section className="border-t border-border bg-secondary px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-6xl">
           <div className="mb-10 flex flex-col gap-3">
             <h2 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
