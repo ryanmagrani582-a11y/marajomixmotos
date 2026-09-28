@@ -5,6 +5,7 @@ export const mainNav = [
   { label: "TRICICLOS", href: "/categorias/triciclos" },
   { label: "SCOOTERS & BIKES", href: "/categorias/scooters" },
   { label: "CONSÓRCIO", href: "/consorcio" },
+  { label: "SOBRE", href: "/sobre" },
 ]
 
 export const adminNav = [
