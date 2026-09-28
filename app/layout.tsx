@@ -45,8 +45,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'dark',
-  themeColor: '#050505',
+  colorScheme: 'light',
+  themeColor: '#ffffff',
   userScalable: true,
 }
 
@@ -56,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" className={`dark ${spaceGrotesk.variable} ${inter.variable}`}>
+    <html lang="pt-BR" className={`bg-background ${spaceGrotesk.variable} ${inter.variable}`}>
       <body className="bg-background font-sans antialiased">
         {children}
         <WhatsAppFloatButton />

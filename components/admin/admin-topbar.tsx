@@ -67,7 +67,7 @@ export function AdminTopbar({ username }: { username?: string }) {
     .join("")
 
   return (
-    <header className="flex h-20 shrink-0 items-center justify-between border-b border-white/10 bg-[#0B0B0B] px-4 sm:px-6">
+    <header className="flex h-20 shrink-0 items-center justify-between border-b border-border bg-card px-4 sm:px-6">
       <div className="flex items-center gap-3">
         <Sheet>
           <SheetTrigger
@@ -76,8 +76,8 @@ export function AdminTopbar({ username }: { username?: string }) {
             <MenuIcon />
             <span className="sr-only">Abrir menu</span>
           </SheetTrigger>
-          <SheetContent side="left" className="w-72 bg-[#0B0B0B] p-0">
-            <SheetHeader className="border-b border-white/10 px-6 py-4">
+          <SheetContent side="left" className="w-72 bg-card p-0">
+            <SheetHeader className="border-b border-border px-6 py-4">
               <SheetTitle className="sr-only">Menu do painel</SheetTitle>
               <Image
                 src="/images/marajo-motors-logo.png"
@@ -97,8 +97,8 @@ export function AdminTopbar({ username }: { username?: string }) {
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                       isActive
-                        ? "bg-primary/15 text-primary"
-                        : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                     )}
                   >
                     <item.icon className="size-4" />
@@ -122,8 +122,8 @@ export function AdminTopbar({ username }: { username?: string }) {
           <p className="text-sm font-medium text-foreground">{username ?? "Administrador"}</p>
           <p className="text-xs text-muted-foreground">Marajó Motors</p>
         </div>
-        <Avatar className="size-9 border border-white/10">
-          <AvatarFallback className="bg-primary/15 text-primary">{initials || "MM"}</AvatarFallback>
+        <Avatar className="size-9 border border-border">
+          <AvatarFallback className="bg-primary/10 text-primary">{initials || "MM"}</AvatarFallback>
         </Avatar>
         <Button variant="ghost" size="icon" render={<Link href="/admin/logout" />} title="Sair">
           <LogOutIcon />

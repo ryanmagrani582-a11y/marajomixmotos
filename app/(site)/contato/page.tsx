@@ -15,7 +15,7 @@ export default function ContatoPage() {
 
   return (
     <div className="flex flex-col">
-      <section className="border-b border-white/10 bg-[#0B0B0B] px-4 py-20 sm:px-6 lg:px-8">
+      <section className="border-b border-border bg-secondary px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
           <span className="text-xs font-medium uppercase tracking-[0.25em] text-primary">Fale com a Marajó Motors</span>
           <h1 className="max-w-2xl font-heading text-4xl font-bold uppercase tracking-tight text-foreground sm:text-5xl">
@@ -30,7 +30,7 @@ export default function ContatoPage() {
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-2 lg:items-start">
           <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-card p-6">
+            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6">
               <div className="flex items-center gap-3">
                 <MessageCircleIcon className="size-5 text-primary" />
                 <p className="font-medium text-foreground">WhatsApp</p>
@@ -45,7 +45,7 @@ export default function ContatoPage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-card p-6">
+            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6">
               <div className="flex items-center gap-3">
                 <MapPinIcon className="size-5 text-primary" />
                 <p className="font-medium text-foreground">Endereço</p>
@@ -55,7 +55,7 @@ export default function ContatoPage() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-card p-6">
+            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6">
               <div className="flex items-center gap-3">
                 <InstagramIcon className="size-5 text-primary" />
                 <p className="font-medium text-foreground">Instagram</p>
