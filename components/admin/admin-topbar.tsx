@@ -3,7 +3,16 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { MenuIcon, LayoutDashboardIcon, PackageIcon, TagsIcon, UsersIcon, ImageIcon, SettingsIcon } from "lucide-react"
+import {
+  MenuIcon,
+  LayoutDashboardIcon,
+  PackageIcon,
+  TagsIcon,
+  UsersIcon,
+  ImageIcon,
+  SettingsIcon,
+  LogOutIcon,
+} from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -48,8 +57,14 @@ function resolveTitle(pathname: string) {
   return base ? titles[base] : "Admin"
 }
 
-export function AdminTopbar() {
+export function AdminTopbar({ username }: { username?: string }) {
   const pathname = usePathname()
+  const initials = (username ?? "MM")
+    .split(/[\s.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("")
 
   return (
     <header className="flex h-20 shrink-0 items-center justify-between border-b border-white/10 bg-[#0B0B0B] px-4 sm:px-6">
@@ -104,12 +119,16 @@ export function AdminTopbar() {
 
       <div className="flex items-center gap-3">
         <div className="hidden text-right sm:block">
-          <p className="text-sm font-medium text-foreground">Administrador</p>
+          <p className="text-sm font-medium text-foreground">{username ?? "Administrador"}</p>
           <p className="text-xs text-muted-foreground">Marajó Motors</p>
         </div>
         <Avatar className="size-9 border border-white/10">
-          <AvatarFallback className="bg-primary/15 text-primary">MM</AvatarFallback>
+          <AvatarFallback className="bg-primary/15 text-primary">{initials || "MM"}</AvatarFallback>
         </Avatar>
+        <Button variant="ghost" size="icon" render={<Link href="/admin/logout" />} title="Sair">
+          <LogOutIcon />
+          <span className="sr-only">Sair</span>
+        </Button>
       </div>
     </header>
   )
