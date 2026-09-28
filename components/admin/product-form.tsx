@@ -220,8 +220,17 @@ export function ProductForm({ product, categories }: { product?: Product; catego
                     </Select>
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="brand">Marca</FieldLabel>
-                    <Input id="brand" value={brand} onChange={(e) => setBrand(e.target.value)} required />
+                    <FieldLabel htmlFor="brand">Sessão / marca</FieldLabel>
+                    <Select value={brand} onValueChange={(value) => value && setBrand(value)}>
+                      <SelectTrigger id="brand" className="w-full">
+                        <SelectValue placeholder="Selecione a sessão" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="YAMAHA">Yamaha</SelectItem>
+                        <SelectItem value="SOUSA MOTOS">Sousa Motos</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FieldDescription>O produto aparecerá na aba correspondente da loja.</FieldDescription>
                   </Field>
                 </div>
                 <Field>
