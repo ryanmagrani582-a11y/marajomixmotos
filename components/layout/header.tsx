@@ -19,15 +19,14 @@ export function Header() {
   }, [])
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-40 transition-all duration-300",
-        scrolled
-          ? "border-b border-border bg-background py-2.5 shadow-sm"
-          : "border-b border-border bg-background py-5 shadow-sm"
-      )}
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <>
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-border bg-background shadow-sm">
+      <div
+        className={cn(
+          "mx-auto flex max-w-7xl items-center justify-between px-4 transition-all duration-300 sm:px-6 lg:px-8",
+          scrolled ? "h-16 md:h-24" : "h-20 md:h-30"
+        )}
+      >
         <Logo className="hidden md:flex" />
 
         <nav className="hidden items-center gap-8 lg:flex">
@@ -51,5 +50,7 @@ export function Header() {
         </div>
       </div>
     </header>
+    <div aria-hidden="true" className="h-20 shrink-0 md:h-30" />
+    </>
   )
 }

@@ -49,7 +49,7 @@ export function HeroSection() {
       <div className="hidden md:absolute md:inset-0 md:bg-gradient-to-r md:from-background md:via-background/70 md:via-30% md:to-transparent md:to-75%" />
 
       {/* Conteúdo: abaixo da imagem no mobile (fluxo normal), sobreposto no desktop */}
-      <div className="absolute inset-x-0 bottom-0 z-10 mx-auto w-full max-w-7xl px-4 pb-8 pt-36 sm:px-6 sm:pb-12 sm:pt-28 md:relative md:inset-auto md:bottom-auto md:mt-0 md:pb-20 md:pt-32 lg:px-8">
+      <div className="absolute inset-x-0 bottom-0 z-10 mx-auto w-full max-w-7xl px-4 pb-8 pt-36 sm:px-6 sm:pb-12 sm:pt-28 md:relative md:inset-auto md:bottom-auto md:mt-0 md:pb-20 md:pt-16 lg:px-8">
         <div
           className="mx-auto max-w-2xl animate-in fade-in slide-in-from-bottom-4 text-center duration-700 md:mx-0 md:text-left"
           style={{ animationFillMode: "backwards" }}
