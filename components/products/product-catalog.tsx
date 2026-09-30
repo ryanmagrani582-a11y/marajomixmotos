@@ -161,7 +161,7 @@ export function ProductCatalog({ products, categories }: { products: Product[]; 
   return (
     <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
       <aside className="hidden lg:block">
-        <div className="sticky top-24 rounded-lg border border-border bg-card p-5">
+        <div className="sticky top-28 rounded-lg border border-border bg-card p-5">
           <h2 className="mb-4 font-heading text-sm font-semibold uppercase tracking-wide text-foreground">
             Filtros
           </h2>

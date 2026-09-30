@@ -5,7 +5,7 @@ const locations = ["Breves", "Portel", "Cametá", "Vigia de Nazaré"]
 export default function SobrePage() {
   return (
     <main className="bg-background text-foreground">
-      <section className="border-b border-border bg-primary px-4 pb-16 pt-36 text-primary-foreground sm:px-6 lg:px-8 lg:pb-24 lg:pt-44">
+      <section className="border-b border-border bg-primary px-4 pb-16 pt-16 text-primary-foreground sm:px-6 lg:px-8 lg:pb-24 lg:pt-24">
         <div className="mx-auto max-w-7xl">
           <p className="font-heading text-xs font-semibold uppercase tracking-[0.24em] text-primary-foreground/75">
             Quem somos
