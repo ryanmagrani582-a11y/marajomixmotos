@@ -1,8 +1,69 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { cookies } from "next/headers"
 import { createSupabaseAdminClient } from "@/lib/supabase/admin"
+import { ADMIN_SESSION_COOKIE_NAME, verifyAdminSessionToken } from "@/lib/auth/admin-session"
 import type { LeadStatus, ProductImage, ProductSpec } from "@/lib/types"
+
+const PRODUCT_IMAGES_BUCKET = "products"
+const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024
+const ALLOWED_IMAGE_TYPES: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/avif": "avif",
+}
+
+async function requireAdminSession() {
+  const cookieStore = await cookies()
+  const session = await verifyAdminSessionToken(cookieStore.get(ADMIN_SESSION_COOKIE_NAME)?.value)
+  if (!session) throw new Error("Sessão expirada. Faça login novamente.")
+  return session
+}
+
+async function ensureProductImagesBucket() {
+  const supabase = createSupabaseAdminClient()
+  const { data } = await supabase.storage.getBucket(PRODUCT_IMAGES_BUCKET)
+  if (data) return
+
+  const { error } = await supabase.storage.createBucket(PRODUCT_IMAGES_BUCKET, {
+    public: true,
+    fileSizeLimit: MAX_IMAGE_SIZE_BYTES,
+    allowedMimeTypes: Object.keys(ALLOWED_IMAGE_TYPES),
+  })
+  if (error && !/already exists/i.test(error.message)) throw error
+}
+
+/**
+ * Gera uma URL assinada para o navegador enviar a imagem direto ao Supabase
+ * Storage — evita o limite de tamanho do corpo das Server Actions.
+ */
+export async function createProductImageUpload(contentType: string, size: number) {
+  await requireAdminSession()
+
+  const extension = ALLOWED_IMAGE_TYPES[contentType]
+  if (!extension) throw new Error("Formato não suportado. Use JPG, PNG, WEBP ou AVIF.")
+  if (!Number.isFinite(size) || size <= 0 || size > MAX_IMAGE_SIZE_BYTES) {
+    throw new Error("A imagem deve ter no máximo 10 MB.")
+  }
+
+  await ensureProductImagesBucket()
+
+  const supabase = createSupabaseAdminClient()
+  const path = `produtos/${crypto.randomUUID()}.${extension}`
+  const { data, error } = await supabase.storage.from(PRODUCT_IMAGES_BUCKET).createSignedUploadUrl(path)
+  if (error) throw error
+
+  const { data: publicData } = supabase.storage.from(PRODUCT_IMAGES_BUCKET).getPublicUrl(path)
+
+  return {
+    bucket: PRODUCT_IMAGES_BUCKET,
+    path: data.path,
+    token: data.token,
+    publicUrl: publicData.publicUrl,
+  }
+}
 
 function revalidateProductPaths() {
   revalidatePath("/admin/produtos")
