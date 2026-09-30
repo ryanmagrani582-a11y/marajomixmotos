@@ -1,5 +1,6 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import { useSiteSettings } from "@/hooks/use-site-settings"
 import { buildWhatsAppLink } from "@/lib/whatsapp"
 
@@ -18,7 +19,10 @@ function WhatsAppIcon({ className }: { className?: string }) {
  * Botão flutuante de WhatsApp, visível em todas as páginas públicas.
  */
 export function WhatsAppFloatButton() {
+  const pathname = usePathname()
   const { settings } = useSiteSettings()
+
+  if (pathname?.startsWith("/admin")) return null
 
   const href = buildWhatsAppLink({
     whatsapp: settings?.whatsapp ?? null,
