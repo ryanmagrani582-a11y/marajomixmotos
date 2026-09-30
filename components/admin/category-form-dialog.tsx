@@ -33,16 +33,25 @@ export function CategoryFormDialog({
   category,
   trigger,
   nextOrder = 0,
+  open: controlledOpen,
+  onOpenChange,
 }: {
   category?: Category
-  trigger: ReactElement
+  trigger?: ReactElement
   nextOrder?: number
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }) {
   const router = useRouter()
   const idPrefix = useId()
   const isEditing = Boolean(category)
 
-  const [open, setOpen] = useState(false)
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false)
+  const open = controlledOpen ?? uncontrolledOpen
+  const setOpen = (value: boolean) => {
+    if (controlledOpen === undefined) setUncontrolledOpen(value)
+    onOpenChange?.(value)
+  }
   const [name, setName] = useState(category?.name ?? "")
   const [slug, setSlug] = useState(category?.slug ?? "")
   const [slugTouched, setSlugTouched] = useState(isEditing)
@@ -87,7 +96,7 @@ export function CategoryFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger} />
+      {trigger ? <DialogTrigger render={trigger} /> : null}
       <DialogContent className="sm:max-w-lg">
         <form onSubmit={handleSubmit}>
           <DialogHeader>

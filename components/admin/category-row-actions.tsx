@@ -29,6 +29,7 @@ import type { Category } from "@/lib/types"
 export function CategoryRowActions({ category }: { category: Category }) {
   const router = useRouter()
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
   async function handleDelete() {
@@ -54,15 +55,10 @@ export function CategoryRowActions({ category }: { category: Category }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
-            <CategoryFormDialog
-              category={category}
-              trigger={
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  <PencilIcon data-icon="inline-start" />
-                  Editar
-                </DropdownMenuItem>
-              }
-            />
+            <DropdownMenuItem onClick={() => setEditOpen(true)}>
+              <PencilIcon data-icon="inline-start" />
+              Editar
+            </DropdownMenuItem>
             <DropdownMenuItem variant="destructive" onClick={() => setConfirmOpen(true)}>
               <Trash2Icon data-icon="inline-start" />
               Excluir
@@ -70,6 +66,8 @@ export function CategoryRowActions({ category }: { category: Category }) {
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <CategoryFormDialog category={category} open={editOpen} onOpenChange={setEditOpen} />
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
