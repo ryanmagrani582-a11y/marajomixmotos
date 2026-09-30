@@ -17,6 +17,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
+import { logoutAction } from "@/app/admin/login/actions"
 
 const items = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboardIcon },
@@ -125,10 +126,13 @@ export function AdminTopbar({ username }: { username?: string }) {
         <Avatar className="size-9 border border-border">
           <AvatarFallback className="bg-primary/10 text-primary">{initials || "MM"}</AvatarFallback>
         </Avatar>
-        <Button variant="ghost" size="icon" render={<Link href="/admin/logout" />} title="Sair">
-          <LogOutIcon />
-          <span className="sr-only">Sair</span>
-        </Button>
+        {/* Logout via Server Action (POST): um <Link> seria pré-carregado pelo Next.js e apagaria a sessão sozinho. */}
+        <form action={logoutAction}>
+          <Button type="submit" variant="ghost" size="icon" title="Sair">
+            <LogOutIcon />
+            <span className="sr-only">Sair</span>
+          </Button>
+        </form>
       </div>
     </header>
   )

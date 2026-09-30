@@ -19,10 +19,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty"
-import { createProduct, updateProduct } from "@/app/admin/actions"
+import { createProduct, createProductImageUpload, updateProduct } from "@/app/admin/actions"
+import { createSupabaseBrowserClient } from "@/lib/supabase/client"
 import type { Category, Product, ProductImage, ProductSpec } from "@/lib/types"
 
-interface ImageDraft extends ProductImage {}
+interface ImageDraft extends ProductImage {
+  uploading?: boolean
+}
 interface SpecDraft extends ProductSpec {}
 
 function slugify(value: string) {
@@ -60,19 +63,48 @@ export function ProductForm({ product, categories }: { product?: Product; catego
     if (!slugTouched) setSlug(slugify(value))
   }
 
+  async function uploadImage(draftId: string, file: File) {
+    try {
+      const upload = await createProductImageUpload(file.type, file.size)
+      const supabase = createSupabaseBrowserClient()
+      const { error } = await supabase.storage
+        .from(upload.bucket)
+        .uploadToSignedUrl(upload.path, upload.token, file, { contentType: file.type })
+      if (error) throw error
+
+      setImages((prev) =>
+        prev.map((img) => {
+          if (img.id !== draftId) return img
+          URL.revokeObjectURL(img.url)
+          return { ...img, url: upload.publicUrl, uploading: false }
+        }),
+      )
+    } catch (error) {
+      toast.error(
+        `Falha ao enviar "${file.name}": ${error instanceof Error ? error.message : "erro desconhecido"}`,
+      )
+      setImages((prev) => {
+        const next = prev.filter((img) => img.id !== draftId)
+        if (next.length > 0 && !next.some((img) => img.isPrimary)) next[0] = { ...next[0], isPrimary: true }
+        return next
+      })
+    }
+  }
+
   function addImagesFromFiles(files: FileList | null) {
     if (!files || files.length === 0) return
-    const drafts: ImageDraft[] = Array.from(files).map((file, index) => ({
+    const fileList = Array.from(files).filter((file) => file.type.startsWith("image/"))
+    const drafts: ImageDraft[] = fileList.map((file, index) => ({
       id: `${idPrefix}-img-${Date.now()}-${index}`,
       url: URL.createObjectURL(file),
       alt: `${name || "Produto"} — foto ${images.length + index + 1}`,
       order: images.length + index,
       isPrimary: images.length === 0 && index === 0,
       productId: product?.id ?? "",
+      uploading: true,
     }))
     setImages((prev) => [...prev, ...drafts])
-    // TODO(supabase): fazer upload real dos arquivos para o Supabase Storage
-    // (bucket de produtos) e salvar as URLs públicas em `product_images`.
+    drafts.forEach((draft, index) => void uploadImage(draft.id, fileList[index]))
   }
 
   function removeImage(id: string) {
@@ -124,8 +156,8 @@ export function ProductForm({ product, categories }: { product?: Product; catego
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (images.some((image) => image.url.startsWith("blob:"))) {
-      toast.error("Faça o upload das imagens antes de salvar — o upload direto ainda não está conectado.")
+    if (images.some((image) => image.uploading || image.url.startsWith("blob:"))) {
+      toast.error("Aguarde o envio das imagens terminar antes de salvar.")
       return
     }
 
@@ -416,6 +448,11 @@ export function ProductForm({ product, categories }: { product?: Product; catego
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-xs text-muted-foreground">{image.alt}</p>
+                        {image.uploading ? (
+                          <p className="text-xs font-medium text-primary" role="status">
+                            Enviando...
+                          </p>
+                        ) : null}
                       </div>
                       <Button
                         type="button"

@@ -9,8 +9,12 @@ import { createBrowserClient } from "@supabase/ssr"
  * Nenhuma service_role key deve ser usada aqui — apenas a anon key.
  */
 export function createSupabaseBrowserClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // A publishable key é pública por natureza (protegida por RLS), então pode ficar como fallback.
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://dazaotnlwyukldzzwifl.supabase.co"
+  const anonKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    "sb_publishable_yzrenXablpgE7rZqqLtDXg_Hb42abE4"
 
   if (!url || !anonKey) {
     throw new Error(
