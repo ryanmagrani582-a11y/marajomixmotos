@@ -12,16 +12,22 @@ import { createClient } from "@supabase/supabase-js"
  * Server Actions dentro de app/admin.
  */
 export function createSupabaseAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://dazaotnlwyukldzzwifl.supabase.co"
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const publishableKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    "sb_publishable_yzrenXablpgE7rZqqLtDXg_Hb42abE4"
 
-  if (!url || !serviceRoleKey) {
-    throw new Error(
-      "Supabase admin não configurado: defina NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY.",
+  // Sem a service_role key, cai para a publishable key: o site público continua
+  // funcionando (RLS permite leitura), mas gravações do admin serão bloqueadas.
+  if (!serviceRoleKey) {
+    console.warn(
+      "SUPABASE_SERVICE_ROLE_KEY ausente — usando publishable key. Gravações do painel admin serão bloqueadas pelo RLS.",
     )
   }
 
-  return createClient(url, serviceRoleKey, {
+  return createClient(url, serviceRoleKey ?? publishableKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   })
 }
