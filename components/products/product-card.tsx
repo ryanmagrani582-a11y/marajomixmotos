@@ -55,7 +55,7 @@ export function ProductCard({ product, className }: { product: Product; classNam
 
         <div className="mt-auto flex flex-col gap-2 pt-2">
           <WhatsAppCtaButton size="sm" className="w-full" productName={product.name}>
-            TENHO INTERESSE
+            Receber Contato
           </WhatsAppCtaButton>
           <Button
             render={<Link href={`/produtos/${product.slug}`} />}
