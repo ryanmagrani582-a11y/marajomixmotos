@@ -1,6 +1,6 @@
 import "server-only"
 
-import type { Category, Lead, Product, ProductImage, ProductSpec, SiteSettings } from "@/lib/types"
+import type { Banner, Category, Lead, Product, ProductImage, ProductSpec, SiteSettings } from "@/lib/types"
 import { mockSiteSettings } from "@/lib/data/mock-site"
 import { createSupabaseAdminClient } from "@/lib/supabase/admin"
 
@@ -48,10 +48,10 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   return data ? mapProductRow(data) : null
 }
 
-export async function getBanners() {
+export async function getBanners(): Promise<Banner[]> {
   const { data, error } = await createSupabaseAdminClient().from("banners").select("*").eq("active", true).order("order")
   if (error) throw error
-  return data ?? []
+  return (data ?? []).map(mapBannerRow)
 }
 
 export async function getSiteSettings() {
@@ -152,6 +152,20 @@ function mapLeadRow(row: Record<string, unknown>): Lead {
   }
 }
 
+function mapBannerRow(row: Record<string, unknown>): Banner {
+  return {
+    id: row.id as string,
+    title: (row.title as string) ?? "",
+    subtitle: (row.subtitle as string) ?? "",
+    imageDesktop: (row.image_desktop as string) ?? "",
+    imageMobile: (row.image_mobile as string) ?? "",
+    ctaLabel: (row.cta_label as string) ?? "",
+    ctaLink: (row.cta_link as string) ?? "",
+    active: Boolean(row.active),
+    order: Number(row.order ?? 0),
+  }
+}
+
 function mapSiteSettingsRow(row: Record<string, unknown>): SiteSettings {
   return {
     companyName: (row.company_name as string) ?? "",
@@ -207,8 +221,8 @@ export async function getAdminSiteSettings(): Promise<SiteSettings> {
   return data ? mapSiteSettingsRow(data) : mockSiteSettings
 }
 
-export async function getAdminBanners() {
+export async function getAdminBanners(): Promise<Banner[]> {
   const { data, error } = await createSupabaseAdminClient().from("banners").select("*").order("order")
   if (error) throw error
-  return data ?? []
+  return (data ?? []).map(mapBannerRow)
 }

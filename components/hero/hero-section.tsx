@@ -3,6 +3,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { mockBanners } from "@/lib/data/mock-site"
+import { getBanners } from "@/lib/data/repository"
 
 const heroQuickLinks = [
   { label: "Motos Yamaha", href: "/categorias/motos" },
@@ -12,11 +13,15 @@ const heroQuickLinks = [
 ]
 
 /**
- * Hero da home. Hoje alimentado pelo primeiro banner ativo em `mock-site.ts`;
- * futuramente virá da tabela `banners` (imagem em Supabase Storage).
+ * Hero da home: usa o primeiro banner ativo da tabela `banners`. Enquanto
+ * nenhum banner estiver cadastrado, mostra o banner padrão de `mock-site.ts`.
  */
-export function HeroSection() {
-  const banner = mockBanners.find((b) => b.active) ?? mockBanners[0]
+export async function HeroSection() {
+  const banners = await getBanners().catch((error) => {
+    console.error("Erro ao carregar banners:", error)
+    return []
+  })
+  const banner = banners[0] ?? mockBanners.find((b) => b.active) ?? mockBanners[0]
 
   return (
     <section className="relative min-h-[115vw] w-full bg-background md:flex md:min-h-[700px] md:items-end md:overflow-hidden">
@@ -72,12 +77,12 @@ export function HeroSection() {
 
           <div className="mt-7 flex flex-col items-center gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-center md:items-center md:justify-start">
             <Button
-              render={<Link href={banner.ctaLink ?? "/produtos"} />}
+              render={<Link href={banner.ctaLink || "/produtos"} />}
               nativeButton={false}
               size="lg"
               className="h-12 w-full px-6 text-sm sm:w-auto"
             >
-              {banner.ctaLabel ?? "VER PRODUTOS"}
+              {banner.ctaLabel || "VER PRODUTOS"}
               <ArrowRight data-icon="inline-end" />
             </Button>
             <Button
