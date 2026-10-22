@@ -303,12 +303,25 @@ export async function deleteCategory(id: string) {
   revalidatePath("/admin")
 }
 
-export async function updateLeadStatus(leadId: string, status: LeadStatus) {
+export async function updateLeadStatus(
+  leadId: string,
+  status: LeadStatus,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    await requireAdminSession()
+  } catch {
+    return { ok: false, error: "Sessão expirada. Faça login novamente." }
+  }
+
   const supabase = createSupabaseAdminClient()
   const { error } = await supabase.from("leads").update({ status }).eq("id", leadId)
-  if (error) throw error
+  if (error) {
+    console.error("Erro ao atualizar lead:", error)
+    return { ok: false, error: `Não foi possível atualizar: ${error.message}` }
+  }
   revalidatePath("/admin/leads")
   revalidatePath("/admin")
+  return { ok: true }
 }
 
 export interface SiteSettingsInput {
@@ -322,22 +335,41 @@ export interface SiteSettingsInput {
   whatsappMessageTemplate: string
 }
 
-export async function updateSiteSettings(input: SiteSettingsInput) {
+export async function updateSiteSettings(
+  input: SiteSettingsInput,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    await requireAdminSession()
+  } catch {
+    return { ok: false, error: "Sessão expirada. Faça login novamente." }
+  }
+
+  const companyName = input.companyName.trim()
+  if (!companyName) return { ok: false, error: "Informe o nome da empresa." }
+
+  const clean = (value: string | null) => {
+    const trimmed = value?.trim() ?? ""
+    return trimmed.length > 0 ? trimmed : null
+  }
+
   const supabase = createSupabaseAdminClient()
   const { error } = await supabase
     .from("site_settings")
     .upsert({
       id: 1,
-      company_name: input.companyName,
-      whatsapp: input.whatsapp,
-      instagram: input.instagram,
-      phone: input.phone,
-      address: input.address,
-      email: input.email,
+      company_name: companyName,
+      whatsapp: clean(input.whatsapp),
+      instagram: clean(input.instagram),
+      phone: clean(input.phone),
+      address: clean(input.address),
+      email: clean(input.email),
       institutional_text: input.institutionalText,
       whatsapp_message_template: input.whatsappMessageTemplate,
     })
-  if (error) throw error
-  revalidatePath("/admin/configuracoes")
-  revalidatePath("/")
+  if (error) {
+    console.error("Erro ao salvar site_settings:", error)
+    return { ok: false, error: `Não foi possível salvar: ${error.message}` }
+  }
+  revalidatePath("/", "layout")
+  return { ok: true }
 }
