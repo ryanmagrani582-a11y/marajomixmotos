@@ -1,7 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { updateSiteSettings } from "@/app/admin/actions"
+import { Loader2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -11,6 +14,8 @@ import type { SiteSettings } from "@/lib/types"
 
 export function SettingsForm({ settings }: { settings: SiteSettings }) {
   const [form, setForm] = useState(settings)
+  const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   function update<K extends keyof SiteSettings>(key: K, value: SiteSettings[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -18,8 +23,28 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    // TODO(supabase): persistir as configurações na tabela `site_settings`.
-    toast.success("Configurações salvas (simulação — conecte o Supabase para persistir).")
+    startTransition(async () => {
+      try {
+        const result = await updateSiteSettings({
+          companyName: form.companyName,
+          whatsapp: form.whatsapp ?? null,
+          instagram: form.instagram ?? null,
+          phone: form.phone ?? null,
+          address: form.address ?? null,
+          email: form.email ?? null,
+          institutionalText: form.institutionalText,
+          whatsappMessageTemplate: form.whatsappMessageTemplate,
+        })
+        if (result.ok) {
+          toast.success("Configurações salvas.")
+          router.refresh()
+        } else {
+          toast.error(result.error)
+        }
+      } catch {
+        toast.error("Erro de conexão ao salvar. Tente novamente.")
+      }
+    })
   }
 
   return (
@@ -124,7 +149,10 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
       </Card>
 
       <div className="flex justify-end">
-        <Button type="submit">Salvar configurações</Button>
+        <Button type="submit" disabled={isPending}>
+          {isPending && <Loader2Icon data-icon="inline-start" className="animate-spin" />}
+          {isPending ? "Salvando..." : "Salvar configurações"}
+        </Button>
       </div>
     </form>
   )
