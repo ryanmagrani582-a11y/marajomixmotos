@@ -70,7 +70,18 @@ export function Footer({ categories }: { categories: Category[] }) {
 
         <div className="mt-14 flex flex-col gap-4 border-t border-background/15 pt-8 text-xs text-background/70 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Marajó Motors. Todos os direitos reservados.</p>
-          <p>Conteúdo institucional e comercial sujeito a atualização.</p>
+          <p>
+            Desenvolvido por:{" "}
+            <a
+              href="https://pushr.com.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-background transition-colors hover:text-primary"
+            >
+              PUSHR - Studio Digital
+            </a>{" "}
+            (pushr.com.br)
+          </p>
         </div>
       </div>
     </footer>
