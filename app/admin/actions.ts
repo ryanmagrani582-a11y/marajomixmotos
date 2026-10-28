@@ -40,6 +40,14 @@ async function ensureProductImagesBucket() {
  * Storage — evita o limite de tamanho do corpo das Server Actions.
  */
 export async function createProductImageUpload(contentType: string, size: number) {
+  return createImageUpload("produtos", contentType, size)
+}
+
+export async function createBannerImageUpload(contentType: string, size: number) {
+  return createImageUpload("banners", contentType, size)
+}
+
+async function createImageUpload(folder: string, contentType: string, size: number) {
   await requireAdminSession()
 
   const extension = ALLOWED_IMAGE_TYPES[contentType]
@@ -51,7 +59,7 @@ export async function createProductImageUpload(contentType: string, size: number
   await ensureProductImagesBucket()
 
   const supabase = createSupabaseAdminClient()
-  const path = `produtos/${crypto.randomUUID()}.${extension}`
+  const path = `${folder}/${crypto.randomUUID()}.${extension}`
   const { data, error } = await supabase.storage.from(PRODUCT_IMAGES_BUCKET).createSignedUploadUrl(path)
   if (error) throw error
 
@@ -322,6 +330,81 @@ export async function updateLeadStatus(
   revalidatePath("/admin/leads")
   revalidatePath("/admin")
   return { ok: true }
+}
+
+type ActionResult = { ok: true } | { ok: false; error: string }
+
+export interface BannerInput {
+  title: string
+  subtitle: string
+  imageDesktop: string
+  imageMobile: string
+  ctaLabel: string
+  ctaLink: string
+  active: boolean
+  order: number
+}
+
+function revalidateBannerPaths() {
+  revalidatePath("/admin/banners")
+  revalidatePath("/")
+}
+
+function bannerRowFromInput(input: BannerInput) {
+  const clean = (value: string) => {
+    const trimmed = value.trim()
+    return trimmed.length > 0 ? trimmed : null
+  }
+  return {
+    title: input.title.trim(),
+    subtitle: input.subtitle.trim(),
+    image_desktop: clean(input.imageDesktop),
+    image_mobile: clean(input.imageMobile),
+    cta_label: clean(input.ctaLabel),
+    cta_link: clean(input.ctaLink),
+    active: input.active,
+    order: Number.isFinite(input.order) ? Math.trunc(input.order) : 0,
+  }
+}
+
+async function runAdminMutation(
+  label: string,
+  mutate: (supabase: ReturnType<typeof createSupabaseAdminClient>) => PromiseLike<{ error: { message: string } | null }>,
+): Promise<ActionResult> {
+  try {
+    await requireAdminSession()
+  } catch {
+    return { ok: false, error: "Sessão expirada. Faça login novamente." }
+  }
+  const { error } = await mutate(createSupabaseAdminClient())
+  if (error) {
+    console.error(`Erro ao ${label}:`, error)
+    return { ok: false, error: `Não foi possível ${label}: ${error.message}` }
+  }
+  revalidateBannerPaths()
+  return { ok: true }
+}
+
+export async function createBanner(input: BannerInput): Promise<ActionResult> {
+  if (!input.title.trim()) return { ok: false, error: "Informe o título do banner." }
+  if (!input.imageDesktop.trim()) return { ok: false, error: "Envie a imagem principal do banner." }
+  return runAdminMutation("criar o banner", (supabase) => supabase.from("banners").insert(bannerRowFromInput(input)))
+}
+
+export async function updateBanner(id: string, input: BannerInput): Promise<ActionResult> {
+  if (!input.title.trim()) return { ok: false, error: "Informe o título do banner." }
+  if (!input.imageDesktop.trim()) return { ok: false, error: "Envie a imagem principal do banner." }
+  return runAdminMutation("salvar o banner", (supabase) =>
+    supabase.from("banners").update(bannerRowFromInput(input)).eq("id", id),
+  )
+}
+
+export async function setBannerActive(id: string, active: boolean): Promise<ActionResult> {
+  return runAdminMutation("atualizar o banner", (supabase) => supabase.from("banners").update({ active }).eq("id", id))
+}
+
+export async function deleteBanner(id: string): Promise<ActionResult> {
+  return runAdminMutation("excluir o banner", (supabase) => supabase.from("banners").delete().eq("id", id))
 }
 
 export interface SiteSettingsInput {
